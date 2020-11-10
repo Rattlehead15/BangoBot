@@ -99,23 +99,24 @@ async def emojiReact(ctx, *, message: str):
             reacciones.append(inventario[c][veces[c]])
             veces[c] += 1
         if not alcanzan:
-            m = await canal.send("No hay suficientes emojis para escribir eso!")
+            m = await canal.send("There's not enough emoji to write that!")
             await m.delete(delay = 5)
         else:
             for c in reacciones:
                 await ultimo.add_reaction(c)
     except Exception as e:
-        m = await canal.send("Ocurrio un error")
+        m = await canal.send("An error ocurred. Try again maybe?")
+        await m.delete(delay = 5)
         print(e)
 
 @bot.command(name = "prefix", help = "Changes bot prefix or reverts back to b! if unspecified")
 async def changePrefix(ctx, *, prefix = "b!"):
     result = await setPrefijo(ctx.guild.id, prefix)
     if result:
-        m = await ctx.send(f"Se cambio el prefijo a {prefix}")
+        m = await ctx.send(f"Prefix changed to {prefix}")
         await m.delete(delay = 5)
     else:
-        m = await ctx.send(f"No se pudo cambiar el prefijo :(")
+        m = await ctx.send(f"Prefix couldn't be changed :(")
         await m.delete(delay = 5)
 
 bot.run(DISCORD_TOKEN)
