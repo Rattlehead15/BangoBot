@@ -4,12 +4,12 @@ import mysql.connector
 from dotenv import load_dotenv
 
 async def getPrefijo(bot, message):
-    prefijo = "$"
+    prefijo = "b!"
     try:
         cursor = cnx.cursor()
         datos = (message.guild.id, )
         cursor.execute("SELECT prefijo FROM guilds WHERE discord_id = %s", datos)
-        prefijo = cursor.fetchone() or "$"
+        prefijo = cursor.fetchone() or "b!"
         cnx.commit()
     except Exception as e:
         print(e)
@@ -81,7 +81,7 @@ cnx = mysql.connector.connect(
 )
 bot = commands.Bot(command_prefix = getPrefijo)
 
-@bot.command(name = "react", help = "Reacciona al ultimo mensaje con palabras en emoji")
+@bot.command(name = "react", help = "Reacts to the last message with emoji words")
 async def emojiReact(ctx, *, message: str):
     canal = ctx.channel
     mensajes = await canal.history(limit = 2).flatten()
@@ -108,8 +108,8 @@ async def emojiReact(ctx, *, message: str):
         m = await canal.send("Ocurrio un error")
         print(e)
 
-@bot.command(name = "prefix", help = "Cambia el prefijo del bot, si no se pasa nada vuelve a $")
-async def changePrefix(ctx, *, prefix = "$"):
+@bot.command(name = "prefix", help = "Changes bot prefix or reverts back to b! if unspecified")
+async def changePrefix(ctx, *, prefix = "b!"):
     result = await setPrefijo(ctx.guild.id, prefix)
     if result:
         m = await ctx.send(f"Se cambio el prefijo a {prefix}")
