@@ -80,14 +80,17 @@ def buildMessage(message, inv = copy.deepcopy(inventario), macros = [], customEm
             if i := next((x for x in customEmojis if match.group() == str(x)), None):
                 ids.append(i)
         message = re.sub("<[^>]*>", "_", message)
+    message = emoji.demojize(message)
+    emojitexts = re.findall(":[^:]*:", message)
+    for k in inv.keys():
+        inv[k] = [x for x in inv[k] if emoji.demojize(x) not in emojitexts]
+    message = re.sub(":[^:]*:", "|", message)
     veces = {a: 0 for a in inv.keys()}
     message = message.replace(" ", "").upper()
     reacciones = []
     alcanzan = True
     for c in message:
-        if c in emoji.UNICODE_EMOJI:
-            reacciones.append(c)
-        elif c in inv.keys():
+        if c in inv.keys():
             if veces[c] >= len(inv[c]):
                 alcanzan = False
                 break
@@ -95,6 +98,8 @@ def buildMessage(message, inv = copy.deepcopy(inventario), macros = [], customEm
             veces[c] += 1
         elif c == "_":
             reacciones.append(ids.pop(0))
+        elif c == "|":
+            reacciones.append(emoji.emojize(emojitexts.pop(0)))
         else:
             alcanzan = False
             break
