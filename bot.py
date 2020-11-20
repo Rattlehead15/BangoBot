@@ -77,7 +77,7 @@ def buildMessage(message, inv = copy.deepcopy(inventario), macros = [], customEm
     ids = []
     if customs:
         for match in customs:
-            if i := next((x for x in customEmojis if match.group() == str(x)), None): #0 es str y 1 es id
+            if i := next((x for x in customEmojis if match.group() == str(x)), None):
                 ids.append(i)
         message = re.sub("<[^>]*>", "_", message)
     veces = {a: 0 for a in inv.keys()}
