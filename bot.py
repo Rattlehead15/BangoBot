@@ -179,6 +179,7 @@ async def emojiReact(ctx, *, message: str):
         print(e)
 
 @bot.command(name = "prefix", help = "Changes bot prefix or reverts back to b! if unspecified")
+@commands.has_permissions(administrator=True)
 async def changePrefix(ctx, *, prefix = "b!"):
     result = await setPrefijo(ctx.guild.id, prefix)
     if result:
@@ -189,6 +190,7 @@ async def changePrefix(ctx, *, prefix = "b!"):
         await m.delete(delay = 5)
 
 @bot.command(name = "macro", help = "Creates and deletes emoji macros for replies")
+@commands.has_permissions(administrator=True)
 async def manageMacros(ctx, mode, keyword, expansion = ""):
     if mode == "add":
         result = await addMacro(keyword, expansion, ctx.guild.id)
