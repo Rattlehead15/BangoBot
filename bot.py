@@ -1,4 +1,5 @@
 import os
+import asyncio
 from discord.ext import commands
 import mysql.connector
 from dotenv import load_dotenv
@@ -177,6 +178,16 @@ async def emojiReact(ctx, *, message: str):
         m = await canal.send("An error ocurred. Try again maybe?")
         await m.delete(delay = 5)
         print(e)
+
+@bot.command(name = "clear", help = "Clears all reacts from the bot on a given message")
+async def emojiClear(ctx):
+    if ctx.message.reference:
+        cita = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+    else:
+        cita = (await ctx.channel.history(limit = 2).flatten())[1]
+    ctx.message.delete(delay = 5)
+    await asyncio.wait([r.remove(bot.user) for r in cita.reactions if r.me])
+
 
 @bot.command(name = "prefix", help = "Changes bot prefix or reverts back to b! if unspecified")
 @commands.has_permissions(administrator=True)
