@@ -189,21 +189,37 @@ async def changePrefix(ctx, *, prefix = "b!"):
         m = await ctx.send(f"Prefix couldn't be changed :(")
         await m.delete(delay = 5)
 
-@bot.command(name = "macro", help = "Creates and deletes emoji macros for replies")
+@bot.group(help = "Creates and deletes emoji macros for replies")
 @commands.has_permissions(administrator=True)
-async def manageMacros(ctx, mode, keyword, expansion = ""):
-    if mode == "add":
-        result = await addMacro(keyword, expansion, ctx.guild.id)
-    elif mode == "delete":
-        result = await deleteMacro(keyword, ctx.guild.id)
-    if result:
-        if mode == "add":
-            m = await ctx.send(f"You can now use ({keyword}) in your reacts to react with {expansion}!")
-        elif mode == "delete":
-            m = await ctx.send(f"Deleted macro ({keyword})")
+async def macro(ctx):
+    if ctx.invoked_subcommand is None:
+        m = await ctx.send("Usage: " + "aaa" + "macro <add|delete|list>")
         await m.delete(delay = 5)
+
+@macro.command(help = "Adds a macro with specified keyword and expansion")
+async def add(ctx, keyword, expansion):
+    result = await addMacro(keyword, expansion, ctx.guild.id)
+    if result:
+        m = await ctx.send(f"You can now use ({keyword}) in your reacts to react with {expansion}!")
     else:
         m = await ctx.send(f"An error occurred :(")
         await m.delete(delay = 5)
+
+@macro.command(help = "Deletes the macro with a specific keyword")
+async def delete(ctx, keyword):
+    result = await deleteMacro(keyword, ctx.guild.id)
+    if result:
+        m = await ctx.send(f"Deleted macro ({keyword})")
+    else:
+        m = await ctx.send(f"An error occurred :(")
+        await m.delete(delay = 5)
+
+@macro.command(name = "list", help = "Lists all macros for this server")
+async def show(ctx):
+    macros = await getMacros(ctx.guild.id)
+    mensaje = "```\nMacros for " + ctx.guild.name + ":\n"
+    mensaje += "\n".join(keyword + ": " + expansion for (keyword, expansion) in macros)
+    mensaje += "```"
+    await ctx.send(mensaje)
 
 bot.run(DISCORD_TOKEN)
