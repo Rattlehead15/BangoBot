@@ -185,7 +185,7 @@ async def emojiClear(ctx):
         cita = await ctx.channel.fetch_message(ctx.message.reference.message_id)
     else:
         cita = (await ctx.channel.history(limit = 2).flatten())[1]
-    await ctx.message.delete(delay = 5)
+    await ctx.message.delete()
     await asyncio.wait([r.remove(bot.user) for r in cita.reactions if r.me])
 
 
